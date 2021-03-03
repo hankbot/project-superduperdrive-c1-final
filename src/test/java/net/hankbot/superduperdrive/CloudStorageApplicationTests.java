@@ -1,4 +1,4 @@
-package com.udacity.jwdnd.course1.cloudstorage;
+package net.hankbot.superduperdrive;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
