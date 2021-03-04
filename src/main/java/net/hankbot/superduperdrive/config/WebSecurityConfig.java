@@ -23,11 +23,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.formLogin()
         .defaultSuccessUrl("/home", true);
 
-    // @TODO: Does logout perms need to be configured?
-//        .and()
-//        .logout()
-//        .permitAll();
-
     // Send back to login screen on logout
     http.logout()
         .logoutSuccessUrl("/login");
