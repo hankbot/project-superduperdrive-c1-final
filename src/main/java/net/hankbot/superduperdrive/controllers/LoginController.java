@@ -28,6 +28,7 @@ public class LoginController {
 
   @GetMapping
   public String displayLogin(Model model) {
+    logger.info("Hello Login");
     return "login";
   }
 
