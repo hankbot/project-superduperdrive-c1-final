@@ -26,7 +26,6 @@ public class UserService {
     return 1;
   }
 
-
   public boolean addUser(User user) {
     if (userMapper.addUser(user) < 0) {
       logger.error("Could not add new user");
