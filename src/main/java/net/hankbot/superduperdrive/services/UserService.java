@@ -26,8 +26,13 @@ public class UserService {
     return 1;
   }
 
-
   public boolean addUser(User user) {
+    // Generate salt and hash password
+    String salt = hashService.generateSalt();
+    String hashedPassword = hashService.getHashedValue(user.getPassword(), salt);
+    user.setPassword(hashedPassword);
+    user.setSalt(salt);
+
     if (userMapper.addUser(user) < 0) {
       logger.error("Could not add new user");
       return false;
