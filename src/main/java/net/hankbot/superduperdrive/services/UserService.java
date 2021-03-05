@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-  UserMapper userMapper;
-  HashService hashService;
+  private UserMapper userMapper;
+  private HashService hashService;
   private Logger logger = LoggerFactory.getLogger(UserService.class);
 
   public UserService(UserMapper userMapper, HashService hashService) {
@@ -19,11 +19,12 @@ public class UserService {
   }
 
   public Integer lookupUserId(String username) {
-    if (userMapper.findUserIdForUsername(username) == null) {
+    Integer userId = userMapper.findUserIdForUsername(username);
+    if (userId == null) {
       return 0;
     }
 
-    return 1;
+    return userId;
   }
 
   public boolean addUser(User user) {

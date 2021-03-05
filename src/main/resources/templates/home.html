@@ -25,7 +25,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form action="#" enctype="multipart/form-data" method="POST">
+                        <form th:action="@{/homeUploadFile}" action="#" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -49,17 +49,43 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:if="${fileList.isEmpty()}">
                                     <td>
-                                        <a target="_blank" class="btn btn-success">View</a>
+                                        &nbsp;
+                                    </td>
+                                    <th scope="row">No Files</th>
+                                </tr>
+                                <tr th:each="file : ${fileList}">
+                                    <td>
+                                        <a target="_blank" class="btn btn-success" th:onclick="|showImageModal('${file.getFileId()}')|" onclick="showImageModal()">View</a>
+<!--                                        Roundtrip to page reload-->
                                         <a  class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">ExampleFile.txt</th>
+                                    <th scope="row" th:value="${file.getFilename()}"></th>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="imageModalLabel">Image</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img id="file-view" src="" width="600px"/>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
@@ -76,6 +102,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td>
                                         <td>
                                             <button type="button" class="btn btn-success">Edit</button>
                                             <a class="btn btn-danger">Delete</a>
@@ -207,6 +234,13 @@
                 $('#credential-username').val(username ? username : '');
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
+            }
+
+            // For opening the image viewer modal
+            function showImageModal(fileId) {
+                $('#file-id').val(fileId ? fileId : '');
+                $('#file-view').attr("src", "/home-view-image?fileId=" + fileId);
+                $('#imageModal').modal('show');
             }
         </script>
     </body>

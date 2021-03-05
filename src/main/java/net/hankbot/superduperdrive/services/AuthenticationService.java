@@ -2,6 +2,8 @@ package net.hankbot.superduperdrive.services;
 
 import net.hankbot.superduperdrive.data.UserMapper;
 import net.hankbot.superduperdrive.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,7 @@ public class AuthenticationService implements AuthenticationProvider {
 
   private UserMapper userMapper;
   private HashService hashService;
+  private Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
   public AuthenticationService(UserMapper userMapper, HashService hashService) {
     this.hashService = hashService;
