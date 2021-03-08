@@ -53,6 +53,7 @@ public class FileService {
   }
 
   public boolean deleteFile(Integer fileId) {
+    fileMapper.deleteFileForFileId(fileId);
     return true;
   }
 

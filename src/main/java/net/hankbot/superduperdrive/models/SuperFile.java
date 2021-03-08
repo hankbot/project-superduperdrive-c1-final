@@ -65,4 +65,11 @@ public class SuperFile {
   public void setFileData(byte[] fileData) {
     this.fileData = fileData;
   }
+
+  public boolean isImage() {
+    if (contentType.contains("image")) {
+      return true;
+    }
+    return false;
+  }
 }

@@ -15,7 +15,7 @@ public interface SuperFileMapper {
   @Options(useGeneratedKeys = true, keyProperty = "fileId")
   Integer addFile(SuperFile uploadedFile);
 
-  @Delete("DELETE FROM FILES WHERE fileId = #{fileId)")
+  @Delete("DELETE FROM FILES WHERE fileId = #{fileId}")
   Integer deleteFileForFileId(Integer fileId);
 
   @Select("SELECT * FROM FILES WHERE fileId = #{fileId}")

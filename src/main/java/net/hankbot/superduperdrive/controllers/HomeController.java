@@ -7,7 +7,6 @@ import net.hankbot.superduperdrive.services.UserService;
 import org.h2.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +51,7 @@ public class HomeController {
     return "home";
   }
 
-  @PostMapping("/homeUploadFile")
+  @PostMapping("/home-upload-file")
   public String processUpload(@RequestParam("fileUpload") MultipartFile fileUpload, RedirectAttributes redirectAttributes, Principal principal) {
     logger.info("Begin upload");
     // Pass the fileUpload to the file service
@@ -63,24 +62,21 @@ public class HomeController {
 
     logger.info("Upload result: " + uploadResult);
 
-    // create message about file upload
-//    redirectAttributes.addFlashAttribute()
-
     return "redirect:/home";
   }
 
-  @GetMapping(
-      value = "/home-download-file",
-      produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-  )
-  public @ResponseBody byte[] downloadFile(@RequestParam Integer fileId) throws IOException {
+  @GetMapping(value = "/home-download-file")
+  public void  downloadFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
     SuperFile file = fileService.fileForId(fileId);
+    response.setContentType(file.getContentType());
+    response.setContentLength(Integer.parseInt(file.getFileSize()));
+    response.setHeader("Content-Disposition", "inline; filename=" + file.getFilename());
     InputStream fileDataStream = new ByteArrayInputStream(file.getFileData());
-    return IOUtils.readBytesAndClose(fileDataStream,0);
+    IOUtils.copy(fileDataStream, response.getOutputStream());
   }
 
   @GetMapping(value = "/home-view-image")
-  public void downloadFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
+  public void viewImageFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
     SuperFile file = fileService.fileForId(fileId);
     response.setContentType(file.getContentType());
     response.setContentLength(Integer.parseInt(file.getFileSize()));
@@ -88,4 +84,24 @@ public class HomeController {
     IOUtils.copy(fileDataStream, response.getOutputStream());
   }
 
+  // THIS REALLY SHOULD NOT BE A GET
+  @GetMapping(value = "/home-delete-file")
+  public String processDelete(@RequestParam Integer fileId, RedirectAttributes redirectAttributes, Principal principal) {
+    logger.info("Begin deletion");
+
+    boolean deleteResult = fileService.deleteFile(fileId);
+
+    logger.info("Delete result: " + deleteResult);
+
+    // create message about file deletion
+    String message = "There was an error deleting the file";
+    if (deleteResult) {
+      // positive
+      message = "The file was deleted";
+    }
+
+    redirectAttributes.addFlashAttribute("message", message);
+
+    return "redirect:/home";
+  }
 }

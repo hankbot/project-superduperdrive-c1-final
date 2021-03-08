@@ -17,6 +17,9 @@
             </div>
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
+                    <div th:if="${message}">
+                        <h2 th:text="${message}"/>
+                    </div>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
                         <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
@@ -25,7 +28,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form th:action="@{/homeUploadFile}" action="#" enctype="multipart/form-data" method="POST">
+                        <form th:action="@{/home-upload-file}" action="#" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -57,18 +60,19 @@
                                 </tr>
                                 <tr th:each="file : ${fileList}">
                                     <td>
-                                        <a target="_blank" class="btn btn-success" th:onclick="|showImageModal('${file.getFileId()}')|" onclick="showImageModal()">View</a>
-<!--                                        Roundtrip to page reload-->
-                                        <a  class="btn btn-danger">Delete</a>
+                                        <a th:if="${file.isImage()}" target="_blank" class="btn btn-success" th:onclick="|showImageModal('${file.getFileId()}')|" onclick="showImageModal()">View</a>
+                                        <a th:if="${!file.isImage()}" target="_blank" class="btn btn-success" th:href="|@{/home-download-file}?fileId=${file.getFileId()}|">Download</a>
+                                        <!-- This REALLY SHOULD NOT BE A GET -->
+                                        <a th:href="|@{/home-delete-file}?fileId=${file.getFileId()}|" class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row" th:value="${file.getFilename()}"></th>
+                                    <th scope="row" th:text="${file.getFilename()}"></th>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
+                        <div class="modal-dialog" role="document" style="max-width:720px;">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="imageModalLabel">Image</h5>
@@ -76,7 +80,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body" style="margin:auto;">
                                     <img id="file-view" src="" width="600px"/>
                                 </div>
                                 <div class="modal-footer">
