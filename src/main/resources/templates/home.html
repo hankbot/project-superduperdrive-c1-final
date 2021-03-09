@@ -28,7 +28,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form th:action="@{/home-upload-file}" action="#" enctype="multipart/form-data" method="POST">
+                        <form th:action="@{/home/file}" action="#" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -61,9 +61,9 @@
                                 <tr th:each="file : ${fileList}">
                                     <td>
                                         <a th:if="${file.isImage()}" target="_blank" class="btn btn-success" th:onclick="|showImageModal('${file.getFileId()}')|" onclick="showImageModal()">View</a>
-                                        <a th:if="${!file.isImage()}" target="_blank" class="btn btn-success" th:href="|@{/home-download-file}?fileId=${file.getFileId()}|">Download</a>
+                                        <a th:if="${!file.isImage()}" target="_blank" class="btn btn-success" th:href="|@{/home/file}?fileId=${file.getFileId()}|">Download</a>
                                         <!-- This REALLY SHOULD NOT BE A GET -->
-                                        <a th:href="|@{/home-delete-file}?fileId=${file.getFileId()}|" class="btn btn-danger">Delete</a>
+                                        <a th:href="|@{/home/file/delete}?fileId=${file.getFileId()}|" class="btn btn-danger">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${file.getFilename()}"></th>
                                 </tr>
@@ -108,7 +108,7 @@
                                     <tr th:each="note : ${noteList}">
                                         <td>
                                             <button onclick="showNoteModal(this.dataset.id, this.dataset.title, this.dataset.description)" th:attr="data-id=${note.getNoteId()},data-description=${note.getNoteDescription()},data-title=${note.getNoteTitle()}" type="button" class="btn btn-success">Edit</button>
-                                            <a th:href="|@{/home-delete-note}?noteId=${note.getNoteId()}|" class="btn btn-danger">Delete</a>
+                                            <a th:href="|@{/home/note/delete}?noteId=${note.getNoteId()}|" class="btn btn-danger">Delete</a>
                                         </td>
                                         <td th:text="${note.getNoteTitle()}"></td>
                                         <td th:text="${note.getNoteDescription()}"></td>
@@ -132,7 +132,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form th:action="@{/home-save-note}" action="#" th:object="${note}" method="POST">
+                                        <form th:action="@{/home/note}" action="#" th:object="${note}" method="POST">
                                             <input th:field="*{noteId}" type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -264,7 +264,7 @@
             // For opening the image viewer modal
             function showImageModal(fileId) {
                 $('#file-id').val(fileId ? fileId : '');
-                $('#file-view').attr("src", "/home-view-image?fileId=" + fileId);
+                $('#file-view').attr("src", "/home/file/view?fileId=" + fileId);
                 $('#imageModal').modal('show');
             }
 

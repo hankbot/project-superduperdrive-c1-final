@@ -89,7 +89,7 @@ public class HomeController {
     return "redirect:/home#nav-credentials-tab";
   }
 
-  @PostMapping("/home-save-note")
+  @PostMapping("/home/note")
   public String processNote(@ModelAttribute("note") SuperNote note, RedirectAttributes redirectAttributes, Principal principal, Model model) {
     logger.info("Begin note save");
 
@@ -119,7 +119,7 @@ public class HomeController {
     return "redirect:/home#nav-notes-tab";
   }
 
-  @PostMapping("/home-upload-file")
+  @PostMapping("/home/file")
   public String processUpload(@RequestParam("fileUpload") MultipartFile fileUpload, RedirectAttributes redirectAttributes, Principal principal) {
     logger.info("Begin upload");
 
@@ -168,7 +168,7 @@ public class HomeController {
     return ResponseEntity.ok(credential);
   }
 
-  @GetMapping(value = "/home-download-file")
+  @GetMapping(value = "/home/file")
   public void  downloadFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
     SuperFile file = fileService.fileForId(fileId);
     response.setContentType(file.getContentType());
@@ -178,7 +178,7 @@ public class HomeController {
     IOUtils.copy(fileDataStream, response.getOutputStream());
   }
 
-  @GetMapping(value = "/home-view-image")
+  @GetMapping(value = "/home/file/view")
   public void viewImageFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
     SuperFile file = fileService.fileForId(fileId);
     response.setContentType(file.getContentType());
@@ -188,7 +188,7 @@ public class HomeController {
   }
 
   // THIS REALLY SHOULD NOT BE A GET
-  @GetMapping(value = "/home-delete-file")
+  @GetMapping(value = "/home/file/delete")
   public String processDeleteFile(@RequestParam Integer fileId, RedirectAttributes redirectAttributes, Principal principal) {
     logger.info("Begin deletion");
 
@@ -209,7 +209,7 @@ public class HomeController {
   }
 
   // THIS REALLY SHOULD NOT BE A GET
-  @GetMapping(value = "/home-delete-note")
+  @GetMapping(value = "/home/note/delete")
   public String processDeleteNote(@RequestParam Integer noteId, RedirectAttributes redirectAttributes, Principal principal) {
     logger.info("Begin deletion");
     Integer currentUserId = userService.lookupUserId(principal.getName());
