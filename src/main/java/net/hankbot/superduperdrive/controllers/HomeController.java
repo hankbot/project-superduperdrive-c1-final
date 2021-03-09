@@ -1,14 +1,13 @@
 package net.hankbot.superduperdrive.controllers;
 
+import net.hankbot.superduperdrive.models.SuperCredential;
 import net.hankbot.superduperdrive.models.SuperFile;
 import net.hankbot.superduperdrive.models.SuperNote;
-import net.hankbot.superduperdrive.services.AuthenticationService;
-import net.hankbot.superduperdrive.services.FileService;
-import net.hankbot.superduperdrive.services.NoteService;
-import net.hankbot.superduperdrive.services.UserService;
+import net.hankbot.superduperdrive.services.*;
 import org.h2.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,19 +27,21 @@ public class HomeController {
   private UserService userService;
   private FileService fileService;
   private NoteService noteService;
+  private CredentialService credentialService;
   private AuthenticationService authenticationService;
 
   private Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-  public HomeController(UserService userService, FileService fileService, NoteService noteService, AuthenticationService authenticationService) {
+  public HomeController(UserService userService, FileService fileService, NoteService noteService, CredentialService credentialService, AuthenticationService authenticationService) {
     this.userService = userService;
     this.fileService = fileService;
     this.noteService = noteService;
+    this.credentialService = credentialService;
     this.authenticationService = authenticationService;
   }
 
   @GetMapping("/home")
-  public String displayHome(@ModelAttribute("note") SuperNote note, Principal principal, Model model) {
+  public String displayHome(@ModelAttribute("note") SuperNote note, @ModelAttribute("credential") SuperCredential credential, Principal principal, Model model) {
     Integer currentUserId = userService.lookupUserId(principal.getName());
 
     // Retrieve file list for user
@@ -51,14 +52,45 @@ public class HomeController {
     ArrayList<SuperNote> noteList = noteService.userNoteList(currentUserId);
     model.addAttribute("noteList", noteList);
 
-
     // Credentials list
+    ArrayList<SuperCredential> credentialList = credentialService.userCredentialList(currentUserId);
+    model.addAttribute("credentialList", credentialList);
 
     return "home";
   }
 
+  @PostMapping("/home/credential")
+  public String processCredential(@ModelAttribute("credential") SuperCredential credential, RedirectAttributes redirectAttributes, Principal principal, Model model) {
+    logger.info("Begin credential save");
+
+    String message = "There was an error saving the credential";
+
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+    boolean credentialResult = false;
+
+    if (credential.getUrl().isEmpty()) {
+      credentialResult = false;
+      message = "Credential was not saved, URL is required";
+    }
+    else if (credential.getCredentialId() == null) {
+      credentialResult = credentialService.addCredentialForUserId(currentUserId, credential);
+    } else {
+      credentialResult = credentialService.updateCredentialForUserId(currentUserId, credential);
+    }
+
+    logger.info("credentialResult: " + credentialResult);
+
+    if (credentialResult) {
+      message = "The credential was saved";
+    }
+
+    redirectAttributes.addFlashAttribute("message", message);
+
+    return "redirect:/home#nav-credentials-tab";
+  }
+
   @PostMapping("/home-save-note")
-  public String processUpload(@ModelAttribute("note") SuperNote note, RedirectAttributes redirectAttributes, Principal principal, Model model) {
+  public String processNote(@ModelAttribute("note") SuperNote note, RedirectAttributes redirectAttributes, Principal principal, Model model) {
     logger.info("Begin note save");
 
     String message = "There was an error saving the note";
@@ -124,6 +156,18 @@ public class HomeController {
     return "redirect:/home";
   }
 
+  @GetMapping(value = "/home/credential")
+  public ResponseEntity<SuperCredential> retrieveCredential(@RequestParam Integer credentialId, Principal principal)  {
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+    SuperCredential credential = credentialService.credentialForId(credentialId, currentUserId);
+
+    if (credentialService == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(credential);
+  }
+
   @GetMapping(value = "/home-download-file")
   public void  downloadFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
     SuperFile file = fileService.fileForId(fileId);
@@ -184,5 +228,27 @@ public class HomeController {
     redirectAttributes.addFlashAttribute("message", message);
 
     return "redirect:/home#nav-notes-tab";
+  }
+
+  // THIS REALLY SHOULD NOT BE A GET
+  @GetMapping(value = "/home/credential/delete")
+  public String processDeleteCredential(@RequestParam Integer credentialId, RedirectAttributes redirectAttributes, Principal principal) {
+    logger.info("Begin deletion");
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+
+    boolean deleteResult = credentialService.deleteCredential(credentialId, currentUserId);
+
+    logger.info("Delete result: " + deleteResult);
+
+    // message about deletion
+    String message = "There was an error deleting the credential";
+    if (deleteResult) {
+      // positive
+      message = "The credential was deleted";
+    }
+
+    redirectAttributes.addFlashAttribute("message", message);
+
+    return "redirect:/home#nav-credentials-tab";
   }
 }
