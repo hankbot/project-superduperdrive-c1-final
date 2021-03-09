@@ -35,10 +35,11 @@
                                         <label for="fileUpload">Upload a New File:</label>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="file" class="form-control-file" id="fileUpload" name="fileUpload">
+                                        <input type="file" class="form-control-file" id="fileUpload" name="fileUpload" >
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="submit" class="btn btn-dark">Upload</button>
+                                        <div>10 MB is the maximum upload size</div>
                                     </div>
                                 </div>
                             </div>
@@ -267,9 +268,6 @@
                 $('#file-view').attr("src", "/home/file/view?fileId=" + fileId);
                 $('#imageModal').modal('show');
             }
-
-
-
 
             <!-- This page should be broken out into partials but here's MVP -->
             $(function () {

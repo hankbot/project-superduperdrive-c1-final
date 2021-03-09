@@ -67,6 +67,10 @@ public class SuperFile {
   }
 
   public boolean isImage() {
+    if (contentType.isEmpty() || contentType == null) {
+      return false;
+    }
+
     if (contentType.contains("image")) {
       return true;
     }

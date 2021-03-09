@@ -15,6 +15,7 @@ public class FileService {
 
   private SuperFileMapper fileMapper;
   private Logger logger = LoggerFactory.getLogger(FileService.class);
+  private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
   public FileService(SuperFileMapper fileMapper) {
     this.fileMapper = fileMapper;
@@ -38,10 +39,17 @@ public class FileService {
 
     String fileName = upload.getOriginalFilename();
 
+    // Very limited set of filetypes identified
+    String contentType = URLConnection.guessContentTypeFromName(fileName);
+
+    if (contentType == null) {
+      contentType = DEFAULT_CONTENT_TYPE;
+    }
+
     SuperFile uploadedFile = new SuperFile(
         null,
         fileName,
-        URLConnection.guessContentTypeFromName(fileName),
+        contentType,
         String.valueOf(upload.getSize()),
         userId,
         fileData
