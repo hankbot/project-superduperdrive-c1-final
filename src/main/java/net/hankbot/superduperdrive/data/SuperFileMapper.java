@@ -11,6 +11,9 @@ public interface SuperFileMapper {
   @Select("SELECT fileId, filename, contenttype, filesize, userid, filedata  FROM FILES WHERE userid = #{userId}")
   ArrayList<SuperFile> findFilesForUserId(Integer userId);
 
+  @Select("SELECT fileId FROM FILES WHERE filename = #{filename} AND userid = #{userId}")
+  ArrayList<Integer> findFilesForNameWithUserId(String filename, Integer userId);
+
   @Insert("INSERT INTO FILES (filename, contenttype, filesize, userid, filedata) VALUES (#{filename}, #{contentType}, #{fileSize}, #{userId}, #{fileData})")
   @Options(useGeneratedKeys = true, keyProperty = "fileId")
   Integer addFile(SuperFile uploadedFile);

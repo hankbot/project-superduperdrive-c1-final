@@ -63,4 +63,13 @@ public class FileService {
     return file;
   }
 
+  public boolean fileExistsForNameWithUserId(String filename, Integer userId) {
+    ArrayList<Integer> matches = fileMapper.findFilesForNameWithUserId(filename, userId);
+
+    if (matches.size() > 0) {
+      return true;
+    }
+
+    return false;
+  }
 }

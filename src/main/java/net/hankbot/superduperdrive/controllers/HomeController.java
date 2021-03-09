@@ -61,20 +61,28 @@ public class HomeController {
   public String processUpload(@ModelAttribute("note") SuperNote note, RedirectAttributes redirectAttributes, Principal principal, Model model) {
     logger.info("Begin note save");
 
+    String message = "There was an error saving the note";
+
     Integer currentUserId = userService.lookupUserId(principal.getName());
     boolean noteResult = false;
 
-    if (note.getNoteId() == null) {
-      noteResult = noteService.addNoteForUserId(currentUserId, note);
+    if (note.getNoteTitle().isEmpty()) {
+      noteResult = false;
+      message = "Note was not saved, Note title is required";
     }
-    else {
+    else if (note.getNoteId() == null) {
+      noteResult = noteService.addNoteForUserId(currentUserId, note);
+    } else {
       noteResult = noteService.updateNoteForUserId(currentUserId, note);
     }
 
-
     logger.info("noteResult: " + noteResult);
 
+    if (noteResult) {
+      message = "The note was saved";
+    }
 
+    redirectAttributes.addFlashAttribute("message", message);
 
     return "redirect:/home#nav-notes-tab";
   }
@@ -82,13 +90,36 @@ public class HomeController {
   @PostMapping("/home-upload-file")
   public String processUpload(@RequestParam("fileUpload") MultipartFile fileUpload, RedirectAttributes redirectAttributes, Principal principal) {
     logger.info("Begin upload");
-    // Pass the fileUpload to the file service
-    boolean uploadResult = fileService.addFileForUserId(
-        userService.lookupUserId(principal.getName()),
-        fileUpload
-    );
 
-    logger.info("Upload result: " + uploadResult);
+    if (fileUpload.isEmpty()) {
+      redirectAttributes.addFlashAttribute("message", "There was a error uploading the file");
+      return "redirect:/home";
+    }
+
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+
+    // create message about file uploading
+    String message = "There was an error uploading the file";
+
+    // check for duplicate file names
+    boolean duplicateFileNameResult = fileService.fileExistsForNameWithUserId(fileUpload.getOriginalFilename(), currentUserId);
+
+    if (duplicateFileNameResult) {
+      message = "The file was not uploaded, there is already a file with that name";
+    }
+    else {
+      // Pass the fileUpload to the file service
+      boolean uploadResult = fileService.addFileForUserId(currentUserId, fileUpload);
+
+      logger.info("Upload result: " + uploadResult);
+
+      if (uploadResult) {
+        // positive
+        message = "The file was uploaded";
+      }
+    }
+
+    redirectAttributes.addFlashAttribute("message", message);
 
     return "redirect:/home";
   }
