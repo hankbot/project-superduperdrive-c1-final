@@ -180,8 +180,9 @@ public class HomeController {
   }
 
   @GetMapping(value = "/home/file")
-  public void  downloadFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
-    SuperFile file = fileService.fileForId(fileId);
+  public void  downloadFile(@RequestParam Integer fileId, HttpServletResponse  response, Principal principal) throws IOException {
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+    SuperFile file = fileService.fileForId(fileId, currentUserId);
     response.setContentType(file.getContentType());
     response.setContentLength(Integer.parseInt(file.getFileSize()));
     response.setHeader("Content-Disposition", "inline; filename=" + file.getFilename());
@@ -190,8 +191,9 @@ public class HomeController {
   }
 
   @GetMapping(value = "/home/file/view")
-  public void viewImageFile(@RequestParam Integer fileId, HttpServletResponse  response) throws IOException {
-    SuperFile file = fileService.fileForId(fileId);
+  public void viewImageFile(@RequestParam Integer fileId, HttpServletResponse  response, Principal principal) throws IOException {
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+    SuperFile file = fileService.fileForId(fileId, currentUserId);
     response.setContentType(file.getContentType());
     response.setContentLength(Integer.parseInt(file.getFileSize()));
     InputStream fileDataStream = new ByteArrayInputStream(file.getFileData());
@@ -202,8 +204,8 @@ public class HomeController {
   @GetMapping(value = "/home/file/delete")
   public String processDeleteFile(@RequestParam Integer fileId, RedirectAttributes redirectAttributes, Principal principal) {
     logger.info("Begin deletion");
-
-    boolean deleteResult = fileService.deleteFile(fileId);
+    Integer currentUserId = userService.lookupUserId(principal.getName());
+    boolean deleteResult = fileService.deleteFile(fileId, currentUserId);
 
     logger.info("Delete result: " + deleteResult);
 

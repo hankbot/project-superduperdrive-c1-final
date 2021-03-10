@@ -65,8 +65,19 @@ public class FileService {
     return true;
   }
 
+  public boolean deleteFile(Integer fileId, Integer userId) {
+    fileMapper.deleteFileForFileIdWithUserId(fileId, userId);
+    return true;
+  }
+
   public SuperFile fileForId(Integer fileId) {
     SuperFile file = fileMapper.findFileForFileId(fileId);
+
+    return file;
+  }
+
+  public SuperFile fileForId(Integer fileId, Integer userId) {
+    SuperFile file = fileMapper.findFileForFileIdWithUserId(fileId, userId);
 
     return file;
   }

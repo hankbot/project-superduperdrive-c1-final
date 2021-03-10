@@ -21,6 +21,12 @@ public interface SuperFileMapper {
   @Delete("DELETE FROM FILES WHERE fileId = #{fileId}")
   Integer deleteFileForFileId(Integer fileId);
 
+  @Delete("DELETE FROM FILES WHERE fileId = #{fileId} AND userid = #{userId}")
+  Integer deleteFileForFileIdWithUserId(Integer fileId, Integer userId);
+
   @Select("SELECT * FROM FILES WHERE fileId = #{fileId}")
   SuperFile findFileForFileId(Integer fileId);
+
+  @Select("SELECT * FROM FILES WHERE fileId = #{fileId} AND userid = #{userId}")
+  SuperFile findFileForFileIdWithUserId(Integer fileId, Integer userId);
 }
