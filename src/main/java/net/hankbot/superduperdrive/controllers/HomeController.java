@@ -11,13 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -48,6 +44,11 @@ public class HomeController {
   @GetMapping("/home")
   public String displayHome(@ModelAttribute("note") SuperNote note, @ModelAttribute("credential") SuperCredential credential, Principal principal, Model model) {
     Integer currentUserId = userService.lookupUserId(principal.getName());
+
+    // Sometimes happens when service is restarted
+    if (currentUserId < 1) {
+      return "redirect:/login";
+    }
 
     // Retrieve file list for user
     ArrayList<SuperFile> fileList = fileService.userFileList(currentUserId);
