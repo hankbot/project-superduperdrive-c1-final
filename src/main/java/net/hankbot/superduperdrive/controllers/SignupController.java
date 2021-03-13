@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/signup")
@@ -28,7 +29,7 @@ public class SignupController {
   }
 
   @PostMapping
-  public String processSignup(@ModelAttribute User user, Model model) {
+  public String processSignup(@ModelAttribute User user, RedirectAttributes redirectAttributes, Model model) {
     boolean signupSuccess = false;
     boolean signupError = false;
     String signupErrorMessage = "";
@@ -56,9 +57,9 @@ public class SignupController {
     }
 
     // Success
-    signupSuccess = true;
-    model.addAttribute("signupSuccess", signupSuccess);
+    redirectAttributes.addFlashAttribute("registerSuccess",
+            "Your account has been created. Please log in.");
 
-    return "signup";
+    return "redirect:/login";
   }
 }
