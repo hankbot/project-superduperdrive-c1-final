@@ -15,7 +15,7 @@ public interface SuperCredentialMapper {
   @Options(useGeneratedKeys = true, keyProperty = "credentialId")
   Integer addCredential(SuperCredential newCredential);
 
-  @Insert("UPDATE CREDENTIALS SET url = #{url}, username = #{username}, key = #{key}, password = #{password}, userid = #{userId} WHERE credentialid = #{credentialId}")
+  @Update("UPDATE CREDENTIALS SET url = #{url}, username = #{username}, key = #{key}, password = #{password}, userid = #{userId} WHERE credentialid = #{credentialId}")
   Integer updateCredential(SuperCredential updatedCredential);
 
   @Delete("DELETE FROM CREDENTIALS WHERE credentialid = #{credentialId}")

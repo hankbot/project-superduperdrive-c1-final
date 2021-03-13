@@ -15,7 +15,7 @@ public interface SuperNoteMapper {
   @Options(useGeneratedKeys = true, keyProperty = "noteId")
   Integer addNote(SuperNote newNote);
 
-  @Insert("UPDATE NOTES SET notetitle = #{noteTitle}, notedescription = #{noteDescription}, userid = #{userId} WHERE noteid = #{noteId}")
+  @Update("UPDATE NOTES SET notetitle = #{noteTitle}, notedescription = #{noteDescription}, userid = #{userId} WHERE noteid = #{noteId}")
   Integer updateNote(SuperNote updatedNote);
 
   @Delete("DELETE FROM NOTES WHERE noteid = #{noteId}")
