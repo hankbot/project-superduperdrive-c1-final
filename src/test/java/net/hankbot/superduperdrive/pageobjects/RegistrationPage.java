@@ -32,7 +32,7 @@ public class RegistrationPage {
   private WebElement errorMessage;
 
   public static final String PATH = "/signup";
-  public static final String MESSAGE_SIGNUP_SUCCESS = "You successfully signed up! Please continue to the login page.";
+  public static final String MESSAGE_SIGNUP_SUCCESS = "Your account has been created. Please log in.";
   public static final String MESSAGE_SIGNUP_DUPLICATE_USERNAME = "The entered username is not available, please select a different one";
 
   public RegistrationPage(WebDriver driver) {

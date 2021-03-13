@@ -5,6 +5,7 @@ import net.hankbot.superduperdrive.pageobjects.LoginPage;
 import net.hankbot.superduperdrive.pageobjects.RegistrationPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -31,8 +32,8 @@ public class UserRegistrationTests extends TestBase {
 
     page.getSubmitButton().click();
 
-    Assertions.assertEquals("Sign Up", driver.getTitle());
-    Assertions.assertEquals(RegistrationPage.MESSAGE_SIGNUP_SUCCESS, page.getMessage().getText());
+    Assertions.assertEquals("Login", driver.getTitle());
+    Assertions.assertEquals(RegistrationPage.MESSAGE_SIGNUP_SUCCESS, driver.findElement(By.id("registration-success")).getText());
 
   }
 
