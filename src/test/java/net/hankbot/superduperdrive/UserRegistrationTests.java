@@ -46,7 +46,7 @@ public class UserRegistrationTests extends TestBase {
     HashMap<String, String> userInfo;
     userInfo = page.registerUser();
 
-    Assertions.assertEquals(RegistrationPage.MESSAGE_SIGNUP_SUCCESS, page.getMessage().getText());
+    Assertions.assertEquals(RegistrationPage.MESSAGE_SIGNUP_SUCCESS, driver.findElement(By.id("registration-success")).getText());
 
     // Begin again
     goToPage(RegistrationPage.PATH);
